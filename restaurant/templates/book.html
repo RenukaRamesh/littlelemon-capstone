@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Reserve a Table</h1>
+
+{% if error %}<p class="msg-error">{{ error }}</p>{% endif %}
+{% if success %}<p class="msg-success">{{ success }}</p>{% endif %}
+
+<form method="POST" action="{% url 'book' %}">
+    {% csrf_token %}
+    <label>Name</label>
+    <input type="text" name="first_name" required>
+
+    <label>Number of Guests</label>
+    <input type="number" name="no_of_guests" min="1" required>
+
+    <label>Date</label>
+    <input type="date" name="reservation_date" id="reservation_date" value="{{ selected_date }}" required onchange="window.location.href='/book/?date=' + this.value">
+    <label>Time Slot</label>
+    <select name="reservation_slot" required>
+    <option value="17:00:00" {% if "17:00:00" in booked_slots %}disabled{% endif %}>5:00 PM{% if "17:00:00" in booked_slots %} (Booked){% endif %}</option>
+    <option value="18:00:00" {% if "18:00:00" in booked_slots %}disabled{% endif %}>6:00 PM{% if "18:00:00" in booked_slots %} (Booked){% endif %}</option>
+    <option value="19:00:00" {% if "19:00:00" in booked_slots %}disabled{% endif %}>7:00 PM{% if "19:00:00" in booked_slots %} (Booked){% endif %}</option>
+    <option value="20:00:00" {% if "20:00:00" in booked_slots %}disabled{% endif %}>8:00 PM{% if "20:00:00" in booked_slots %} (Booked){% endif %}</option>
+    <option value="21:00:00" {% if "21:00:00" in booked_slots %}disabled{% endif %}>9:00 PM{% if "21:00:00" in booked_slots %} (Booked){% endif %}</option>
+</select>
+
+    <button type="submit">Book Now</button>
+</form>
+
+<h2 style="margin-top:30px;">Bookings For {{ selected_date }}</h2>
+{% if bookings %}
+    <ul>
+    {% for b in bookings %}
+        <li>{{ b.first_name }} - {{ b.reservation_slot }} - {{ b.no_of_guests }} guests</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Booking</p>
+{% endif %}
+{% endblock %}
